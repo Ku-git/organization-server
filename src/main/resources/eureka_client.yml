@@ -1,0 +1,15 @@
+#server:
+#  port: 8081
+
+#配置 Eureka
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: #若要註冊到多台 Eureka Server，可用逗號區隔
+        http://localhost:8070/eureka/
+    healthcheck:
+      enabled: true
+  instance:
+    preferIpAddress: true #使用 IP 地址註冊
+    instanceId: ${spring.cloud.client.ip-address}:${server.port} #向註冊中心註冊服務 Id，以供辨識
+
