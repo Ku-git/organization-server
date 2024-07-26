@@ -2,6 +2,7 @@ package com.organization.controller;
 
 import com.organization.model.Organization;
 import com.organization.service.OrganizationService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,4 +29,12 @@ public class OrganizationController {
         Organization organization = organizationService.create(request);
         return ResponseEntity.ok(organization);
     }
+
+    @DeleteMapping("/{organizationId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteOrganization(@PathVariable("organizationId") String organizationId) {
+
+        organizationService.delete(organizationId);
+    }
+
 }

@@ -1,5 +1,6 @@
 package com.organization.service;
 
+import com.organization.event.process.KafkaProcessor;
 import com.organization.model.Organization;
 import com.organization.repository.OrganizationRepository;
 import org.springframework.stereotype.Service;
@@ -12,8 +13,11 @@ public class OrganizationService {
 
     private final OrganizationRepository repository;
 
-    public OrganizationService(OrganizationRepository repository) {
+    private final KafkaProcessor kafkaProcessor;
+
+    public OrganizationService(OrganizationRepository repository, KafkaProcessor kafkaProcessor) {
         this.repository = repository;
+        this.kafkaProcessor = kafkaProcessor;
     }
 
     public Organization findById(String organizationId) {
@@ -24,6 +28,16 @@ public class OrganizationService {
     public Organization create(Organization organization){
         organization.setOrganizationId(UUID.randomUUID().toString());
         organization = repository.save(organization);
+
+        kafkaProcessor.process("CREATE", organization.getOrganizationId());
+
         return organization;
     }
+
+    public void delete(String organizationId) {
+
+        repository.deleteById(organizationId);
+        kafkaProcessor.process("DELETE", organizationId);
+    }
+
 }
