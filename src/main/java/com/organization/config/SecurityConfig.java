@@ -63,6 +63,8 @@ public class SecurityConfig {
     public SecurityFilterChain resourcesServerFilterChain(HttpSecurity http) throws Exception {
 
         http.authorizeHttpRequests(auth -> auth
+                .requestMatchers("/prometheus", "/health")
+                .permitAll()
                 .requestMatchers(new AntPathRequestMatcher("/v1/organization"))
                 .permitAll()
                 .anyRequest()

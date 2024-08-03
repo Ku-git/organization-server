@@ -21,12 +21,21 @@ public class KafkaConfig {
         props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "kafka:29092");
         props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
+
         return new DefaultKafkaProducerFactory<>(props);
     }
 
     @Bean
     public KafkaTemplate<String, Object> kafkaTemplate() {
-        return new KafkaTemplate<>(producerFactory());
+        KafkaTemplate<String, Object> kafkaTemplate = new KafkaTemplate<>(producerFactory());
+        //預設是false，改為true之後就可以在zipkin看到相關kafka傳送的行為，但是如要想在接收方看到相關行為
+        //則需要再接收方那新增相關屬性:spring.kafka.listener.observation-enabled=true
+        kafkaTemplate.setObservationEnabled(true);
+        //同上述的行為但可以新增額外的資訊到kafka topic的message，暫且保留
+        //若要實作，需要額外使用bean初始化
+//        kafkaTemplate.setProducerInterceptor(tracingKafkaInterceptor());
+
+        return kafkaTemplate;
     }
 
 
