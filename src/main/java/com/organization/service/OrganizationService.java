@@ -3,6 +3,8 @@ package com.organization.service;
 import com.organization.event.process.KafkaProcessor;
 import com.organization.model.Organization;
 import com.organization.repository.OrganizationRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -10,6 +12,8 @@ import java.util.UUID;
 
 @Service
 public class OrganizationService {
+
+    private static final Logger logger = LoggerFactory.getLogger(OrganizationService.class);
 
     private final OrganizationRepository repository;
 
@@ -26,6 +30,7 @@ public class OrganizationService {
     }
 
     public Organization create(Organization organization){
+
         organization.setOrganizationId(UUID.randomUUID().toString());
         organization = repository.save(organization);
 
@@ -37,6 +42,7 @@ public class OrganizationService {
     public void delete(String organizationId) {
 
         repository.deleteById(organizationId);
+
         kafkaProcessor.process("DELETE", organizationId);
     }
 
